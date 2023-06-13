@@ -18,4 +18,5 @@ interface IView {
     fun drawPowerUps(powerUps : List<PowerUp>)
     fun normalizeX(x : Int) : Float
     fun normalizeY(y : Int) : Float
+    fun saveFrameBuffer()
 }

@@ -24,7 +24,12 @@ class Controller(private val view : IView, var model : Model?) : IGameController
         }
 
         model?.update(deltaTime, gestureDetector.gesture)
+
         if(view.lastFrameBuffer != null)
             model?.collisions(view.lastFrameBuffer!!, view.backGroundColor)
+    }
+
+    fun saveFrameBufferIfMandatory(){
+        model?.saveFrameBufferIfMandatory { view.saveFrameBuffer() }
     }
 }

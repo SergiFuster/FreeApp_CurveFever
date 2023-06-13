@@ -74,17 +74,31 @@ class MainActivity(
         for(player in players) {
             with(player) {
                 if (painting && !immortal) {
-                    graphics.drawLine(
-                        lastPosition.x.toFloat(),
-                        lastPosition.y.toFloat(),
-                        position.x.toFloat(),
-                        position.y.toFloat(),
-                        radius,
-                        color
-                    )
+                    drawLine(graphics, lastPosition, position, radius, color)
+                    drawCircle(graphics, position, radius/2, color)
+                    drawCircle(graphics, lastPosition, radius/2, color)
                 }
             }
         }
+    }
+
+    private fun drawLine(graphics: Graphics, src : Vector2, dst : Vector2, radius : Float, color : Int){
+        graphics.drawLine(
+            src.x.toFloat(),
+            src.y.toFloat(),
+            dst.x.toFloat(),
+            dst.y.toFloat(),
+            radius,
+            color
+        )
+    }
+    private fun drawCircle(graphics: Graphics, position : Vector2, radius : Float, color : Int){
+        graphics.drawCircle(
+            position.x.toFloat(),
+            position.y.toFloat(),
+            radius,
+            color
+        )
     }
 
     override fun drawHeads(players: List<Player>) {
@@ -118,7 +132,7 @@ class MainActivity(
                 graphics.drawBitmap(lastFrameBuffer, 0f, 0f)
         // region ---------------------------------DRAWING------------------------------------------
             drawTrails(model!!.game.players)
-            lastFrameBuffer = graphics.frameBuffer.copy(graphics.frameBuffer.config, true)
+            controller.saveFrameBufferIfMandatory()
             drawHeads(model!!.game.players)
             drawPowerUps(model!!.game.onMapPowerUps)
         // endregion -------------------------------------------------------------------------------
@@ -149,5 +163,9 @@ class MainActivity(
 
     override fun normalizeY(y: Int) : Float {
         return y * scaleY
+    }
+
+    override fun saveFrameBuffer() {
+        lastFrameBuffer = graphics.frameBuffer.copy(graphics.frameBuffer.config, true)
     }
 }

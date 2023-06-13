@@ -97,6 +97,6 @@ open class Player protected constructor(
         fun builder() : Builder = Builder()
         const val HOLE_SIZE = 0.5f
         const val HOLE_PROB = 0.1f
-        const val SAVE_POSITION_DELAY = 0.2f
+        const val SAVE_POSITION_DELAY = 0.3f
     }
 }
