@@ -14,6 +14,7 @@ import kotlin.random.Random
 class Game private constructor(
     val players : List<Player>,
     val player : Player,
+    val npcs : List<NPC>,
     val ranking : Stack<Player>,
     val powerUpRadius : Float,
     private val availablePowerUps : List<PowerUp>
@@ -130,7 +131,7 @@ class Game private constructor(
                     .setPosition(pickAndRemoveRandomPosition(availablePositions))
                     .build()
 
-            val allPlayers : MutableList<Player> = arrayListOf()
+
 
             val availableColors : MutableList<Int> =
                 mutableListOf(
@@ -143,8 +144,10 @@ class Game private constructor(
                 )
             availableColors.remove(mainPlayer.color)
 
+            val npcPlayers : MutableList<NPC> = arrayListOf()
+
             for(i in 1 until playersNumber)
-                allPlayers.add(
+                npcPlayers.add(
                     NPC.builder()
                         .setSpeed(playersSpeed)
                         .setRotationSpeed(playersRotationSpeed)
@@ -164,10 +167,11 @@ class Game private constructor(
                 }
             }
 
-
+            val allPlayers : MutableList<Player> = arrayListOf()
+            for (npc in npcPlayers) allPlayers.add(npc)
             allPlayers.add(mainPlayer)
 
-            return Game(allPlayers, mainPlayer, Stack<Player>(), powerUpSize, powerUps.toList())
+            return Game(allPlayers, mainPlayer, npcPlayers, Stack<Player>(), powerUpSize, powerUps.toList())
         }
 
         private fun pickAndRemoveRandomPosition(availablePositions: MutableList<Vector2>): Vector2 {

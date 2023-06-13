@@ -1,7 +1,9 @@
 package com.example.freeapp_curvefever.Model.Player
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import com.example.freeapp_curvefever.Utilities.Vector2
+import com.jcamenatuji.sharkuji.controller.GestureDetector
 
 class NPC(
     speed: Float,
@@ -11,6 +13,20 @@ class NPC(
     position: Vector2,
     direction: Vector2
 ) : Player(speed, rotationSpeed, radius, color, position, direction) {
+    fun think(frameBuffer: Bitmap) {
+        thinking = true
+        val possibilities : List<GestureDetector.Gestures?> = arrayListOf(
+            GestureDetector.Gestures.RIGHT,
+            GestureDetector.Gestures.LEFT,
+            null
+        )
+        action = possibilities.random()
+        thinking = false
+    }
+
+    var action: GestureDetector.Gestures? = null
+    var thinking: Boolean = false
+
     class Builder{
         private var speedBuilder : Float = 10f
         private var rotationSpeedBuilder : Float = 10f
@@ -26,7 +42,7 @@ class NPC(
         fun setPosition(value : Vector2) = apply { positionBuilder = value }
         fun setDirection(value : Vector2) = apply { directionBuilder = value }
 
-        fun build() : Player{
+        fun build() : NPC{
             return NPC(speedBuilder, rotationSpeedBuilder, radiusBuilder, colorBuilder, positionBuilder, directionBuilder)
         }
     }

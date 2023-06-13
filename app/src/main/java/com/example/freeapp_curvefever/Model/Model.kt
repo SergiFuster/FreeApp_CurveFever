@@ -1,9 +1,11 @@
 package com.example.freeapp_curvefever.Model
 
 import android.graphics.Bitmap
-import android.location.GnssAntennaInfo.Listener
 import com.example.freeapp_curvefever.Model.Game.Game
 import com.jcamenatuji.sharkuji.controller.GestureDetector
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class Model private constructor(
     val game : Game,
@@ -55,8 +57,18 @@ class Model private constructor(
         if(gesture != null){
             game.player.rotate(deltaTime, gesture == GestureDetector.Gestures.RIGHT)
         }
+        executeNPCsActions(deltaTime)
         game.move(deltaTime)
         game.update(deltaTime,screenWidth, screeHeight)
+    }
+
+    private fun executeNPCsActions(deltaTime: Float) {
+        for (npc in game.npcs){
+            if (npc.action == null) continue
+            npc.rotate(deltaTime, npc.action == GestureDetector.Gestures.RIGHT)
+            npc.action = null
+        }
+
     }
 
     fun saveFrameBufferIfMandatory(viewSaveLastFrameBuffer : () -> Unit){
@@ -69,6 +81,17 @@ class Model private constructor(
     fun collisions(frameBuffer : Bitmap, backgroundColor : Int){
         game.collisions(frameBuffer, backgroundColor)
     }
+
+    fun think(lastFrameBuffer: Bitmap?) {
+        if (lastFrameBuffer == null) return
+        for(npc in game.npcs){
+            if (npc.thinking) continue
+            CoroutineScope(Dispatchers.Main).launch {
+                npc.think(lastFrameBuffer)
+            }
+        }
+    }
+
     companion object{
         fun builder() : Builder = Builder()
         const val TIME_TO_SAVE_FRAME_BUFFER = 1 / 10
