@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import com.example.freeapp_curvefever.Assets.rotatedCurrentFrame
 import com.example.freeapp_curvefever.Controller.Controller
+import com.example.freeapp_curvefever.Model.Game.Game
 import com.example.freeapp_curvefever.Model.Model
 import com.example.freeapp_curvefever.Model.Player.Player
 import com.example.freeapp_curvefever.Model.PowerUps.PowerUp
@@ -20,9 +22,10 @@ class MainActivity(
 
     // -------------------------------INTENT INFORMATION -------------------------------------------
     override var playerColor: Int = Color.RED
-    override var playersNumber: Int = 6 // max 6
+    override val playerShip: Int = 6
+    override var playersNumber: Int = 1 // max 6
     override var powerUpStrings: List<String> = arrayListOf("JUMP")
-    override val backGroundColor: Int = Color.DKGRAY
+    override val backGroundColor: Int = Color.parseColor("#001B3B")
     // ---------------------------------------------------------------------------------------------
     override var lastFrameBuffer: Bitmap? = null
     var model : Model? = null
@@ -49,9 +52,8 @@ class MainActivity(
         graphics.clear(backGroundColor)
 
         val powerUpCorrectedRadius = POWER_UP_RADIUS / scaleX
-
-        Assets.createResizableAssets(this, powerUpCorrectedRadius)
-
+        val playerSize = PLAYER_RADIUS / scaleX
+        Assets.createResizableAssets(this, powerUpCorrectedRadius, playerSize)
         model =
             Model.builder()
                 .setScreenSize(screenWidth, screenHeight)
@@ -59,8 +61,9 @@ class MainActivity(
                     PLAYERS_SPEED / scaleX,
                     PLAYERS_ROTATION_SPEED,
                     playerColor,
+                    playerShip,
                     playersNumber,
-                    PLAYER_RADIUS / scaleX,
+                    playerSize,
                     powerUpCorrectedRadius,
                     powerUpStrings
                 )
@@ -73,7 +76,7 @@ class MainActivity(
     override fun drawTrails(players: List<Player>) {
         for(player in players) {
             with(player) {
-                if (painting && !immortal) {
+                if (painting && !immortal && alive) {
                     drawLine(graphics, lastPosition, position, radius, color)
                     drawCircle(graphics, position, radius/2, color)
                     drawCircle(graphics, lastPosition, radius/2, color)
@@ -104,11 +107,11 @@ class MainActivity(
     override fun drawHeads(players: List<Player>) {
         for(player in players) {
             with(player) {
-                graphics.drawCircle(
-                    position.x.toFloat(),
-                    position.y.toFloat(),
-                    radius,
-                    color
+                val rotatedBitmap = animation.rotatedCurrentFrame(Vector2.degreesBetween(direction).toFloat())
+                graphics.drawBitmap(
+                    rotatedBitmap,
+                    position.x.toFloat() - rotatedBitmap.width / 2,
+                    position.y.toFloat() - rotatedBitmap.height / 2
                 )
             }
         }
@@ -117,10 +120,13 @@ class MainActivity(
     override fun drawPowerUps(powerUps: List<PowerUp>) {
         for (powerUp in powerUps) {
             with(powerUp) {
+                val w = bitmap.width.toFloat()
+                val h = bitmap.height.toFloat()
+                drawCircle(graphics, position, w, color)
                 graphics.drawBitmap(
-                    powerUp.bitmap,
-                    position.x.toFloat(),
-                    position.y.toFloat()
+                    bitmap,
+                    position.x.toFloat() - w/2,
+                    position.y.toFloat() - h/2
                 )
             }
         }
@@ -128,14 +134,15 @@ class MainActivity(
 
     override fun onDrawingRequested(): Bitmap {
         if (model != null) {
+
             if (lastFrameBuffer != null)
                 graphics.drawBitmap(lastFrameBuffer, 0f, 0f)
-        // region ---------------------------------DRAWING------------------------------------------
+
             drawTrails(model!!.game.players)
+            drawDeaths(model!!.game.deathCircles)
             controller.saveFrameBufferIfMandatory()
             drawHeads(model!!.game.players)
             drawPowerUps(model!!.game.onMapPowerUps)
-        // endregion -------------------------------------------------------------------------------
         }
 
 
@@ -167,5 +174,16 @@ class MainActivity(
 
     override fun saveFrameBuffer() {
         lastFrameBuffer = graphics.frameBuffer.copy(graphics.frameBuffer.config, true)
+    }
+
+    override fun drawDeaths(deathCircles: MutableList<Game.Circle>) {
+        for (circle in deathCircles){
+            drawCircle(graphics, circle.center, circle.radius, backGroundColor)
+        }
+    }
+
+    override fun updateAnimations(deltaTime: Float) {
+        for (player in model!!.game.players)
+            player.animation.update(deltaTime)
     }
 }

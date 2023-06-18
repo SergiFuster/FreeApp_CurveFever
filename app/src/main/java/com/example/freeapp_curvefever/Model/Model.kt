@@ -12,9 +12,15 @@ class Model private constructor(
     val screenWidth : Int,
     val screeHeight : Int,
     var timer : Float = 0f,
-    var lastFrameBufferSave : Float = 0f
+    var lastFrameBufferSave : Float = 0f,
+    var timeToStart : Float = 5f,
+    var state : State = State.STARTING
 ){
-
+    enum class State{
+        STARTING,
+        PLAYING,
+        RESULTS
+    }
     class Builder{
 
         private lateinit var game : Game
@@ -29,6 +35,7 @@ class Model private constructor(
             playersSpeed : Float,
             playersRotationSpeed : Float,
             playerColor : Int,
+            playerShipIndex : Int,
             playersNumber : Int,
             playersSize : Float,
             powerUpsSize : Float,
@@ -39,6 +46,7 @@ class Model private constructor(
                     .setPlayersSpeed(playersSpeed)
                     .setPlayersRotationSpeed(playersRotationSpeed)
                     .setPlayerColor(playerColor)
+                    .setPlayerShip(playerShipIndex)
                     .setPlayersNumber(playersNumber)
                     .setPlayersSize(playersSize)
                     .setPowerUpsSize(powerUpsSize)
@@ -54,6 +62,9 @@ class Model private constructor(
 
     fun update(deltaTime: Float, gesture: GestureDetector.Gestures?){
         timer += deltaTime
+        if (timer < timeToStart) return
+        else if(state == State.STARTING) state = State.PLAYING
+
         if(gesture != null){
             game.player.rotate(deltaTime, gesture == GestureDetector.Gestures.RIGHT)
         }
@@ -82,12 +93,12 @@ class Model private constructor(
         game.collisions(frameBuffer, backgroundColor)
     }
 
-    fun think(lastFrameBuffer: Bitmap?) {
+    fun think(lastFrameBuffer: Bitmap?, backgroundColor: Int) {
         if (lastFrameBuffer == null) return
         for(npc in game.npcs){
             if (npc.thinking) continue
             CoroutineScope(Dispatchers.Main).launch {
-                npc.think(lastFrameBuffer)
+                npc.think(lastFrameBuffer, backgroundColor)
             }
         }
     }

@@ -3,6 +3,7 @@ package com.example.freeapp_curvefever.Model.Game
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
+import com.example.freeapp_curvefever.Assets
 import com.example.freeapp_curvefever.Model.Player.NPC
 import com.example.freeapp_curvefever.Model.Player.Player
 import com.example.freeapp_curvefever.Model.PowerUps.Jump
@@ -17,25 +18,33 @@ class Game private constructor(
     val npcs : List<NPC>,
     val ranking : Stack<Player>,
     val powerUpRadius : Float,
-    private val availablePowerUps : List<PowerUp>
+    private val availablePowerUps : List<PowerUp>,
+    val deathCircles : MutableList<Circle> = arrayListOf()
 ) {
     var onMapPowerUps : MutableList<PowerUp> = arrayListOf()
 
+    class Circle constructor(val center : Vector2, val radius : Float)
     fun collisions(frameBuffer: Bitmap, backgroundColor: Int){
         for (p in players) {
             if (!p.alive) continue
             collisionsWithPowerUps(p)
-            collisionsWithLinesOrOutOfScreen(p, frameBuffer, backgroundColor)
+            if (collisionsWithLinesOrOutOfScreen(p, frameBuffer, backgroundColor))
+                addDeathCircleOfPlayer(p)
         }
     }
 
-    private fun collisionsWithLinesOrOutOfScreen(p: Player, frameBuffer: Bitmap, backgroundColor: Int) {
+    private fun addDeathCircleOfPlayer(p: Player) {
+        deathCircles.add(Circle(p.position.copy(), p.getExplosionSize()))
+    }
+
+    private fun collisionsWithLinesOrOutOfScreen(p: Player, frameBuffer: Bitmap, backgroundColor: Int) : Boolean {
         for (point in p.collisionPoints()){
             if(pointCollideWithTrailOrIsOutOfScreen(frameBuffer, point, backgroundColor)){
                 p.alive = false
-                break
+                return true
             }
         }
+        return false
     }
 
     private fun pointCollideWithTrailOrIsOutOfScreen(frameBuffer: Bitmap, point : Vector2, backgroundColor: Int) : Boolean{
@@ -94,6 +103,7 @@ class Game private constructor(
         private var playersSpeed : Float = 0f
         private var playersRotationSpeed : Float = 0f
         private var playerColor : Int = Color.WHITE
+        private var playerShip : Int = 0
         private var playersNumber : Int = 0
         private var playersSize : Float = 0f
         private var powerUpSize : Float = 0f
@@ -103,6 +113,7 @@ class Game private constructor(
         fun setPlayersSpeed(value : Float) = apply { playersSpeed = value }
         fun setPlayersRotationSpeed(value : Float) = apply { playersRotationSpeed = value }
         fun setPlayerColor(value : Int) = apply { playerColor = value }
+        fun setPlayerShip(value : Int) = apply {playerShip = value}
         fun setPlayersNumber(value : Int) = apply { playersNumber = value }
         fun setPlayersSize(value : Float) = apply {
             Log.i("GAME", "PLAYER SIZE : $value")
@@ -127,6 +138,7 @@ class Game private constructor(
                     .setSpeed(playersSpeed)
                     .setRotationSpeed(playersRotationSpeed)
                     .setColor(playerColor)
+                    .setShip(playerShip)
                     .setRadius(playersSize)
                     .setPosition(pickAndRemoveRandomPosition(availablePositions))
                     .build()
@@ -151,6 +163,7 @@ class Game private constructor(
                     NPC.builder()
                         .setSpeed(playersSpeed)
                         .setRotationSpeed(playersRotationSpeed)
+                        .setShip(Assets.getRandomAvailableIndex())
                         .setColor(pickAvailableColorAndDeleteFromList(availableColors))
                         .setRadius(playersSize)
                         .setPosition(pickAndRemoveRandomPosition(availablePositions))

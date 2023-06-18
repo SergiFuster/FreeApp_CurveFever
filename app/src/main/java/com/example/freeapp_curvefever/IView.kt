@@ -1,6 +1,7 @@
 package com.example.freeapp_curvefever
 
 import android.graphics.Bitmap
+import com.example.freeapp_curvefever.Model.Game.Game
 import com.example.freeapp_curvefever.Model.Player.Player
 import com.example.freeapp_curvefever.Model.PowerUps.PowerUp
 import com.example.freeapp_curvefever.Utilities.Vector2
@@ -19,4 +20,8 @@ interface IView {
     fun normalizeX(x : Int) : Float
     fun normalizeY(y : Int) : Float
     fun saveFrameBuffer()
+    fun drawDeaths(deathCircles: MutableList<Game.Circle>)
+    fun updateAnimations(deltaTime: Float)
+
+    val playerShip: Int
 }

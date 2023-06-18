@@ -12,6 +12,7 @@ interface PowerUp {
     var player : Player?
     var duration : Float
     var bitmap : Bitmap
+    val color : Int
 
     fun effect()
     fun uneffect()

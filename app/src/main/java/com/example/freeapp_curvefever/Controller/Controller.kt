@@ -24,9 +24,13 @@ class Controller(private val view : IView, var model : Model?) : IGameController
         }
 
         model?.update(deltaTime, gestureDetector.gesture)
-        model?.think(view.lastFrameBuffer)
+        if (model?.state != Model.State.PLAYING) return
+
+        model?.think(view.lastFrameBuffer, view.backGroundColor)
         if(view.lastFrameBuffer != null)
             model?.collisions(view.lastFrameBuffer!!, view.backGroundColor)
+
+        view.updateAnimations(deltaTime)
     }
 
     fun saveFrameBufferIfMandatory(){

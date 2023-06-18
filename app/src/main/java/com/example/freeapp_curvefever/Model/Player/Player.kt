@@ -2,8 +2,10 @@ package com.example.freeapp_curvefever.Model.Player
 
 import android.graphics.Color
 import android.util.Log
+import com.example.freeapp_curvefever.Assets
 import com.example.freeapp_curvefever.Model.PowerUps.PowerUp
 import com.example.freeapp_curvefever.Utilities.Vector2
+import es.uji.vj1229.framework.AnimatedBitmap
 
 open class Player protected constructor(
     var speed : Float,
@@ -12,6 +14,7 @@ open class Player protected constructor(
     val color : Int,
     var position : Vector2,
     var direction : Vector2,
+    val animation : AnimatedBitmap,
     var lastPosition : Vector2 = position.copy(),
     var painting : Boolean = true,
     var timer : Float = 0f,
@@ -25,6 +28,7 @@ open class Player protected constructor(
         private var speedBuilder : Float = 10f
         private var rotationSpeedBuilder : Float = 10f
         private var colorBuilder : Int = Color.WHITE
+        private lateinit var animationBuilder : AnimatedBitmap
         private var positionBuilder : Vector2 = Vector2.zero
         private var directionBuilder : Vector2 = Vector2.right
         private var radiusBuilder : Float = 0f
@@ -32,20 +36,29 @@ open class Player protected constructor(
         fun setSpeed(value : Float) = apply { speedBuilder = value }
         fun setRotationSpeed(value : Float) = apply { rotationSpeedBuilder = value }
         fun setColor(value : Int) = apply { colorBuilder = value }
+        fun setShip(value : Int) = apply { animationBuilder = Assets.getShipAnimationByIndex(value) }
         fun setRadius(value : Float) = apply {radiusBuilder = value }
         fun setPosition(value : Vector2) = apply { positionBuilder = value }
         fun setDirection(value : Vector2) = apply { directionBuilder = value }
 
         fun build() : Player{
-            return Player(speedBuilder, rotationSpeedBuilder, radiusBuilder, colorBuilder, positionBuilder, directionBuilder)
+            return Player(
+                speedBuilder,
+                rotationSpeedBuilder,
+                radiusBuilder,
+                colorBuilder,
+                positionBuilder,
+                directionBuilder,
+                animationBuilder
+            )
         }
     }
 
     fun collisionPoints(): List<Vector2> {
         return arrayListOf(
-            position + direction * radius,
-            position + direction.right() * radius,
-            position + direction.left() * radius
+            position + direction * radius
+            //position + direction.right() * radius,
+            //position + direction.left() * radius
         )
     }
 
@@ -91,6 +104,10 @@ open class Player protected constructor(
         for(powerUp in activePowerUps){
             powerUp.update(deltaTime)
         }
+    }
+
+    fun getExplosionSize() : Float{
+        return radius * 4
     }
 
     companion object{

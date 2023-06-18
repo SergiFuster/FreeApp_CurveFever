@@ -1,10 +1,13 @@
 package com.example.freeapp_curvefever.Utilities
 import android.util.Log
+import java.util.Vector
+import kotlin.io.path.createTempDirectory
 import kotlin.math.*
 
 open class Vector2(var x: Double, var y: Double) {
 
     constructor(x : Int, y : Int) : this(x.toDouble(), y.toDouble())
+    constructor(x : Float, y : Float) : this(x.toDouble(), y.toDouble())
 
     fun magnitude(): Double {
         return sqrt(x * x + y * y)
@@ -48,10 +51,12 @@ open class Vector2(var x: Double, var y: Double) {
     }
 
     fun right() : Vector2{
+        // Relative right to self
         return Vector2(-y, x)
     }
 
     fun left() : Vector2{
+        // Relative left to self
         return Vector2(y, -x)
     }
     fun normalized(): Vector2 {
@@ -116,6 +121,27 @@ open class Vector2(var x: Double, var y: Double) {
 
         val down: Vector2
             get() = Vector2(0.0, 1.0)
+
+        fun degreesBetween(to : Vector2, from: Vector2 = up) : Double{
+            val dotProduct = dotProduct(from, to)
+
+            val fromMagnitude = from.magnitude()
+            val toMagnitude = to.magnitude()
+
+            val radians = acos(dotProduct / (fromMagnitude * toMagnitude))
+
+            var degrees = Math.toDegrees(radians)
+
+            if(to.x < 0){
+                degrees = 360 - degrees
+            }
+
+            return degrees
+        }
+
+        private fun dotProduct(v1 : Vector2, v2 : Vector2) : Double{
+            return v1.x * v2.x + v1.y * v2.y
+        }
     }
 
 }
