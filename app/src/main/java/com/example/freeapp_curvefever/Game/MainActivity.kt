@@ -18,6 +18,7 @@ import com.example.freeapp_curvefever.Game.Model.PowerUps.PowerUp
 import com.example.freeapp_curvefever.Game.Utilities.Vector2
 import com.example.freeapp_curvefever.Menu.GameInfo
 import com.example.freeapp_curvefever.Menu.MenuActivity
+import com.example.freeapp_curvefever.Menu.SoundActivity
 import com.example.freeapp_curvefever.R
 import com.example.sharkuji.GAME.Sound.SoundPlayer
 import es.uji.vj1229.framework.GameActivity
@@ -317,7 +318,7 @@ class MainActivity(
 
     override fun restartApplication() {
         stopMusic()
-        val intent = Intent(this, MenuActivity::class.java)
+        val intent = Intent(this, SoundActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         this.startActivity(intent)
         this.finish()

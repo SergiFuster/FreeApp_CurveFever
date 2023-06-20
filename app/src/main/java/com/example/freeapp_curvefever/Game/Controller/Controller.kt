@@ -63,7 +63,7 @@ class Controller(private val view : IView, var model : Model?) : IGameController
             }
             Model.State.RESULTS -> if (timer-lastTimeInResultState >= timeInResults){
                 if (model?.game!!.rounds >= model?.game!!.maxRounds) {
-                    view.soundEffects?.Finish()
+                    model?.finishGame()
                 }
                 else {
                     setInitialValues()

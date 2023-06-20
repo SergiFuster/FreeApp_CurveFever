@@ -186,7 +186,7 @@
         android:enabled="false"
         android:text="PLAY"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/soundTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/thickUpImageView" />
 
     <ImageView
         android:id="@+id/thickUpImageView"
@@ -206,24 +206,5 @@
         app:layout_constraintStart_toEndOf="@+id/thickUpImageView"
         app:layout_constraintTop_toTopOf="@+id/thickUpImageView"
         app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/soundTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:text="Sound:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/thickUpImageView" />
-
-    <Switch
-        android:id="@+id/soundSwitch"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/soundTextView"
-        app:layout_constraintStart_toEndOf="@+id/soundTextView"
-        app:layout_constraintTop_toTopOf="@+id/soundTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

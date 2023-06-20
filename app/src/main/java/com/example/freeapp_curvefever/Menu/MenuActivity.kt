@@ -31,7 +31,6 @@ class MenuActivity : AppCompatActivity(), MenuView {
     lateinit var thickDownCheckBox : CheckBox
     lateinit var thickUpCheckBox : CheckBox
     lateinit var speedUpCheckBox : CheckBox
-    lateinit var soundSwitch : Switch
 
     val model : MenuModel = MenuModel()
     val presenter : MenuPresenter = MenuPresenter(this, model)
@@ -44,10 +43,11 @@ class MenuActivity : AppCompatActivity(), MenuView {
         R.drawable.ship_5_icon,
         R.drawable.ship_6_icon
     )
-
+    var sound : Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+        sound = intent.getBooleanExtra(SoundActivity.SOUND, true)
         playerColorPicker = findViewById(R.id.playerColorPicker)
         playerColorPicker.setOnClickListener { presenter.colorPickerPressed() }
         playerColorViewer = findViewById(R.id.playerColorViewer)
@@ -70,9 +70,8 @@ class MenuActivity : AppCompatActivity(), MenuView {
             thickUpCheckBox.isChecked,
             thickDownCheckBox.isChecked,
             jumpCheckBox.isChecked,
-            soundSwitch.isChecked
+            sound
         ) }
-        soundSwitch = findViewById(R.id.soundSwitch)
         if(savedInstanceState != null){
             presenter.setState(savedInstanceState)
         }
