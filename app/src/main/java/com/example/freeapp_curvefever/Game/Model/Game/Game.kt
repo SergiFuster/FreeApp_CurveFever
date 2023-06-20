@@ -1,42 +1,67 @@
-package com.example.freeapp_curvefever.Model.Game
+package com.example.freeapp_curvefever.Game.Model.Game
 
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
-import com.example.freeapp_curvefever.Assets
-import com.example.freeapp_curvefever.Model.Player.NPC
-import com.example.freeapp_curvefever.Model.Player.Player
-import com.example.freeapp_curvefever.Model.PowerUps.Jump
-import com.example.freeapp_curvefever.Model.PowerUps.PowerUp
-import com.example.freeapp_curvefever.Utilities.Vector2
-import java.util.Stack
+import com.example.freeapp_curvefever.Game.Assets
+import com.example.freeapp_curvefever.Game.Model.Player.NPC
+import com.example.freeapp_curvefever.Game.Model.Player.Player
+import com.example.freeapp_curvefever.Game.Model.PowerUps.*
+import com.example.freeapp_curvefever.Game.Utilities.Vector2
+import es.uji.vj1229.framework.AnimatedBitmap
 import kotlin.random.Random
 
 class Game private constructor(
     val players : List<Player>,
     val player : Player,
     val npcs : List<NPC>,
-    val ranking : Stack<Player>,
     val powerUpRadius : Float,
+    var maxRounds : Int,
     private val availablePowerUps : List<PowerUp>,
-    val deathCircles : MutableList<Circle> = arrayListOf()
+    var rounds : Int = 0,
+    val roundRanking : MutableList<Player> = arrayListOf(),
+    val pointsPerRound : List<Int> = arrayListOf(25, 75, 125, 175, 225, 275),
+    var winner : Player? = null
 ) {
     var onMapPowerUps : MutableList<PowerUp> = arrayListOf()
 
-    class Circle constructor(val center : Vector2, val radius : Float)
     fun collisions(frameBuffer: Bitmap, backgroundColor: Int){
         for (p in players) {
-            if (!p.alive) continue
+            if (!p.alive) {
+                continue
+            }
             collisionsWithPowerUps(p)
-            if (collisionsWithLinesOrOutOfScreen(p, frameBuffer, backgroundColor))
+            if (collisionsWithLinesOrOutOfScreen(p, frameBuffer, backgroundColor)) {
+                addPlayerToRoundRanking(p)
                 addDeathCircleOfPlayer(p)
+            }
         }
     }
 
-    private fun addDeathCircleOfPlayer(p: Player) {
-        deathCircles.add(Circle(p.position.copy(), p.getExplosionSize()))
+    fun roundFinished() {
+        rounds++
+        for (i in 0 until roundRanking.size){
+            roundRanking[i].totalPoints += pointsPerRound[i]
+            Log.i("GAME", "Points for ${roundRanking[i]}: ${pointsPerRound[i]}, total: ${roundRanking[i].totalPoints}")
+        }
+        Log.i("GAME", "Rounds remaining: ${maxRounds - rounds}")
     }
 
+    private fun addDeathCircleOfPlayer(p: Player) {
+        p.addDeathCircle()
+    }
+
+    fun addPlayerToRoundRanking(p : Player){
+        roundRanking.add(p)
+    }
+
+    fun addRemainingPlayerToRoundRanking(){
+        for (player in players){
+            if (player.alive){
+                roundRanking.add(player)
+            }
+        }
+    }
     private fun collisionsWithLinesOrOutOfScreen(p: Player, frameBuffer: Bitmap, backgroundColor: Int) : Boolean {
         for (point in p.collisionPoints()){
             if(pointCollideWithTrailOrIsOutOfScreen(frameBuffer, point, backgroundColor)){
@@ -72,6 +97,7 @@ class Game private constructor(
 
     fun move(deltaTime: Float) {
         for(p in players) {
+            if (!p.alive) continue
             if (p.timeToSaveLastPosition()) p.saveLastPosition()
             p.move(deltaTime)
         }
@@ -99,6 +125,24 @@ class Game private constructor(
         }
     }
 
+    fun setReadyForNextRound() {
+        for (p in players){
+            p.resetValues()
+        }
+        roundRanking.clear()
+        onMapPowerUps.clear()
+    }
+
+    fun setWinner() {
+        var max = -1
+        for(player in players){
+            if (player.totalPoints > max){
+                winner = player
+                max = player.totalPoints
+            }
+        }
+    }
+
     class Builder{
         private var playersSpeed : Float = 0f
         private var playersRotationSpeed : Float = 0f
@@ -107,6 +151,7 @@ class Game private constructor(
         private var playersNumber : Int = 0
         private var playersSize : Float = 0f
         private var powerUpSize : Float = 0f
+        private var roundNumberBuilder : Int = 0
         private lateinit var screenSize : Vector2
         private lateinit var powerUpStrings : List<String>
 
@@ -120,9 +165,10 @@ class Game private constructor(
             playersSize = value }
         fun setPowerUpsString(value : List<String>) = apply { powerUpStrings = value }
         fun setPowerUpsSize(value : Float) = apply { powerUpSize = value }
-        fun setScreenSize(width : Int, height : Int) = apply{screenSize = Vector2(width, height)}
+        fun setScreenSize(width : Int, height : Int) = apply{screenSize = Vector2(width, height) }
+        fun setRoundNumber(value : Int) = apply { roundNumberBuilder = value }
 
-        fun build() : Game{
+        fun build() : Game {
             val availablePositions = mutableListOf<Vector2>(
                 Vector2(0.375,  0.25) * screenSize,
                 Vector2(0.625,  0.75) * screenSize,
@@ -130,20 +176,22 @@ class Game private constructor(
                 Vector2(0.375,  0.75) * screenSize,
                 Vector2(0.75,   0.50) * screenSize,
                 Vector2(0.25,   0.50) * screenSize
-
             )
-
+            var id = 0
+            val playerPosition : Vector2 = availablePositions.random()
+            availablePositions.remove(playerPosition)
+            val playerAnimation : AnimatedBitmap = Assets.getShipAnimationByIndex(playerShip)
             val mainPlayer : Player =
-                Player.builder()
-                    .setSpeed(playersSpeed)
-                    .setRotationSpeed(playersRotationSpeed)
-                    .setColor(playerColor)
-                    .setShip(playerShip)
-                    .setRadius(playersSize)
-                    .setPosition(pickAndRemoveRandomPosition(availablePositions))
-                    .build()
-
-
+                Player(
+                    id++,
+                    playersSpeed,
+                    playersRotationSpeed,
+                    playersSize,
+                    playerColor,
+                    playerPosition,
+                    Vector2.right,
+                    playerAnimation
+                )
 
             val availableColors : MutableList<Int> =
                 mutableListOf(
@@ -158,25 +206,34 @@ class Game private constructor(
 
             val npcPlayers : MutableList<NPC> = arrayListOf()
 
-            for(i in 1 until playersNumber)
+            for(i in 1 until playersNumber) {
+                val npcPosition : Vector2 = availablePositions.random()
+                availablePositions.remove(npcPosition)
+                val npcAnimation : AnimatedBitmap = Assets.getRandomAnimation()
+                val npcColor = availableColors.random()
+                availableColors.remove(npcColor)
                 npcPlayers.add(
-                    NPC.builder()
-                        .setSpeed(playersSpeed)
-                        .setRotationSpeed(playersRotationSpeed)
-                        .setShip(Assets.getRandomAvailableIndex())
-                        .setColor(pickAvailableColorAndDeleteFromList(availableColors))
-                        .setRadius(playersSize)
-                        .setPosition(pickAndRemoveRandomPosition(availablePositions))
-                        .build()
+                    NPC(
+                        id++,
+                        playersSpeed,
+                        playersRotationSpeed,
+                        playersSize,
+                        npcColor,
+                        npcPosition,
+                        Vector2.right,
+                        npcAnimation
+                    )
                 )
+            }
 
             val powerUps : MutableList<PowerUp> = arrayListOf()
             for (powerUpString in powerUpStrings){
                 when(powerUpString){
                     "JUMP" -> {powerUps.add(Jump(Vector2.zero, powerUpSize.toDouble()))}
-                    "SIZE_UP" -> {}
-                    "SIZE_DOWN" -> {}
-                    // ...
+                    "SIZE_UP" -> {powerUps.add(SizeUp(Vector2.zero, powerUpSize.toDouble()))}
+                    "SIZE_DOWN" -> {powerUps.add(SizeDown(Vector2.zero, powerUpSize.toDouble()))}
+                    "SPEED_DOWN" -> {powerUps.add(SpeedDown(Vector2.zero, powerUpSize.toDouble()))}
+                    "SPEED_UP" -> {powerUps.add(SpeedUp(Vector2.zero, powerUpSize.toDouble()))}
                 }
             }
 
@@ -184,7 +241,7 @@ class Game private constructor(
             for (npc in npcPlayers) allPlayers.add(npc)
             allPlayers.add(mainPlayer)
 
-            return Game(allPlayers, mainPlayer, npcPlayers, Stack<Player>(), powerUpSize, powerUps.toList())
+            return Game(allPlayers, mainPlayer, npcPlayers, powerUpSize, roundNumberBuilder, powerUps.toList())
         }
 
         private fun pickAndRemoveRandomPosition(availablePositions: MutableList<Vector2>): Vector2 {

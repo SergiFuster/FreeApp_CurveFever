@@ -1,7 +1,7 @@
-package com.example.freeapp_curvefever.Model
+package com.example.freeapp_curvefever.Game.Model
 
 import android.graphics.Bitmap
-import com.example.freeapp_curvefever.Model.Game.Game
+import com.example.freeapp_curvefever.Game.Model.Game.Game
 import com.jcamenatuji.sharkuji.controller.GestureDetector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,15 +11,13 @@ class Model private constructor(
     val game : Game,
     val screenWidth : Int,
     val screeHeight : Int,
-    var timer : Float = 0f,
-    var lastFrameBufferSave : Float = 0f,
-    var timeToStart : Float = 5f,
     var state : State = State.STARTING
 ){
     enum class State{
         STARTING,
         PLAYING,
-        RESULTS
+        RESULTS,
+        FINISHED
     }
     class Builder{
 
@@ -39,7 +37,8 @@ class Model private constructor(
             playersNumber : Int,
             playersSize : Float,
             powerUpsSize : Float,
-            powerUpStrings : List<String>
+            powerUpStrings : List<String>,
+            roundNumber : Int
         ) = apply {
             game =
                 Game.builder()
@@ -52,51 +51,63 @@ class Model private constructor(
                     .setPowerUpsSize(powerUpsSize)
                     .setPowerUpsString(powerUpStrings)
                     .setScreenSize(screenWidthBuilder, screenHeightBuilder)
+                    .setRoundNumber(roundNumber)
                     .build()
         }
 
-        fun build() : Model{
+        fun build() : Model {
             return Model(game, screenWidthBuilder, screenHeightBuilder)
         }
     }
 
-    fun update(deltaTime: Float, gesture: GestureDetector.Gestures?){
-        timer += deltaTime
-        if (timer < timeToStart) return
-        else if(state == State.STARTING) state = State.PLAYING
+    fun startNextRound() {
+        game.setReadyForNextRound()
+        state = State.STARTING
+    }
 
-        if(gesture != null){
+    fun finishGame() {
+        state = State.FINISHED
+        game.setWinner()
+    }
+
+    fun updateGame(deltaTime: Float){
+        game.update(deltaTime, screenWidth, screeHeight)
+    }
+
+    fun movement(deltaTime: Float){
+        game.move(deltaTime)
+    }
+
+    fun rotations(deltaTime: Float, gesture: GestureDetector.Gestures?){
+        if(gesture != null && game.player.alive){
             game.player.rotate(deltaTime, gesture == GestureDetector.Gestures.RIGHT)
         }
         executeNPCsActions(deltaTime)
-        game.move(deltaTime)
-        game.update(deltaTime,screenWidth, screeHeight)
     }
 
     private fun executeNPCsActions(deltaTime: Float) {
         for (npc in game.npcs){
-            if (npc.action == null) continue
+            if (npc.action == null || !npc.alive) continue
             npc.rotate(deltaTime, npc.action == GestureDetector.Gestures.RIGHT)
             npc.action = null
         }
 
     }
 
-    fun saveFrameBufferIfMandatory(viewSaveLastFrameBuffer : () -> Unit){
-        if (timer-lastFrameBufferSave >= TIME_TO_SAVE_FRAME_BUFFER) {
-            lastFrameBufferSave = timer
-            viewSaveLastFrameBuffer()
-        }
-    }
-
     fun collisions(frameBuffer : Bitmap, backgroundColor : Int){
         game.collisions(frameBuffer, backgroundColor)
+    }
+
+    fun roundFinished(){
+        game.addRemainingPlayerToRoundRanking()
+        game.roundFinished()
+        state = State.RESULTS
     }
 
     fun think(lastFrameBuffer: Bitmap?, backgroundColor: Int) {
         if (lastFrameBuffer == null) return
         for(npc in game.npcs){
-            if (npc.thinking) continue
+            if (npc.thinking || !npc.alive) continue
             CoroutineScope(Dispatchers.Main).launch {
                 npc.think(lastFrameBuffer, backgroundColor)
             }

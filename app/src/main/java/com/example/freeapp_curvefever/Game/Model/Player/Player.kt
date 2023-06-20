@@ -1,13 +1,13 @@
-package com.example.freeapp_curvefever.Model.Player
+package com.example.freeapp_curvefever.Game.Model.Player
 
 import android.graphics.Color
-import android.util.Log
-import com.example.freeapp_curvefever.Assets
-import com.example.freeapp_curvefever.Model.PowerUps.PowerUp
-import com.example.freeapp_curvefever.Utilities.Vector2
+import com.example.freeapp_curvefever.Game.Assets
+import com.example.freeapp_curvefever.Game.Model.PowerUps.PowerUp
+import com.example.freeapp_curvefever.Game.Utilities.Vector2
 import es.uji.vj1229.framework.AnimatedBitmap
 
-open class Player protected constructor(
+open class Player constructor(
+    val id : Int,
     var speed : Float,
     var rotationSpeed : Float,
     var radius : Float,
@@ -22,8 +22,26 @@ open class Player protected constructor(
     var lastNotPaintingStart : Float = timer,
     var lastPositionSavedTime : Float = timer,
     var activePowerUps : MutableList<PowerUp> = arrayListOf(),
-    var immortal : Boolean = false
+    var immortal : Boolean = false,
+    var deathCircle : Circle = Circle(position, 0f),
+    var totalPoints : Int = 0,
+    val startPosition : Vector2 = position.copy()
 ) {
+    fun resetValues(){
+        position = startPosition.copy()
+        direction = Vector2.right
+        lastPosition = position.copy()
+        painting = true
+        timer = 0f
+        alive = true
+        lastNotPaintingStart = timer
+        lastPositionSavedTime = timer
+        while(activePowerUps.isNotEmpty()){
+            activePowerUps[0].uneffect()
+        }
+        immortal = false
+        deathCircle = Circle(position, 0f)
+    }
     class Builder{
         private var speedBuilder : Float = 10f
         private var rotationSpeedBuilder : Float = 10f
@@ -32,6 +50,7 @@ open class Player protected constructor(
         private var positionBuilder : Vector2 = Vector2.zero
         private var directionBuilder : Vector2 = Vector2.right
         private var radiusBuilder : Float = 0f
+        private var idBuilder : Int = 0
 
         fun setSpeed(value : Float) = apply { speedBuilder = value }
         fun setRotationSpeed(value : Float) = apply { rotationSpeedBuilder = value }
@@ -39,10 +58,12 @@ open class Player protected constructor(
         fun setShip(value : Int) = apply { animationBuilder = Assets.getShipAnimationByIndex(value) }
         fun setRadius(value : Float) = apply {radiusBuilder = value }
         fun setPosition(value : Vector2) = apply { positionBuilder = value }
+        fun setId(value : Int) = apply { idBuilder = value }
         fun setDirection(value : Vector2) = apply { directionBuilder = value }
 
-        fun build() : Player{
+        fun build() : Player {
             return Player(
+                idBuilder,
                 speedBuilder,
                 rotationSpeedBuilder,
                 radiusBuilder,
@@ -109,6 +130,15 @@ open class Player protected constructor(
     fun getExplosionSize() : Float{
         return radius * 4
     }
+
+    fun addDeathCircle() {
+        deathCircle = Circle(position.copy(), getExplosionSize())
+    }
+
+    override fun toString(): String {
+        return id.toString()
+    }
+    class Circle constructor(val center : Vector2, val radius : Float)
 
     companion object{
         fun builder() : Builder = Builder()

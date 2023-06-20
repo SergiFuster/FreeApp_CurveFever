@@ -1,18 +1,14 @@
-package com.example.freeapp_curvefever.Model.Player
+package com.example.freeapp_curvefever.Game.Model.Player
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.util.Log
-import androidx.core.graphics.get
-import com.example.freeapp_curvefever.Assets
-import com.example.freeapp_curvefever.Utilities.Vector2
+import com.example.freeapp_curvefever.Game.Assets
+import com.example.freeapp_curvefever.Game.Utilities.Vector2
 import com.jcamenatuji.sharkuji.controller.GestureDetector
 import es.uji.vj1229.framework.AnimatedBitmap
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
 
 class NPC(
+    id : Int,
     speed: Float,
     rotationSpeed: Float,
     radius: Float,
@@ -20,7 +16,7 @@ class NPC(
     position: Vector2,
     direction: Vector2,
     animation : AnimatedBitmap
-) : Player(speed, rotationSpeed, radius, color, position, direction, animation) {
+) : Player(id, speed, rotationSpeed, radius, color, position, direction, animation) {
     fun think(frameBuffer: Bitmap, backGroundColor : Int) {
         thinking = true
 
@@ -71,6 +67,7 @@ class NPC(
         private var positionBuilder : Vector2 = Vector2.zero
         private var directionBuilder : Vector2 = Vector2.right
         private var radiusBuilder : Float = 0f
+        private var idBuilder : Int = 0
 
         fun setSpeed(value : Float) = apply { speedBuilder = value }
         fun setRotationSpeed(value : Float) = apply { rotationSpeedBuilder = value }
@@ -79,9 +76,11 @@ class NPC(
         fun setRadius(value : Float) = apply { radiusBuilder = value }
         fun setPosition(value : Vector2) = apply { positionBuilder = value }
         fun setDirection(value : Vector2) = apply { directionBuilder = value }
+        fun setId(value : Int) = apply { idBuilder = value }
 
-        fun build() : NPC{
+        fun build() : NPC {
             return NPC(
+                idBuilder,
                 speedBuilder,
                 rotationSpeedBuilder,
                 radiusBuilder,

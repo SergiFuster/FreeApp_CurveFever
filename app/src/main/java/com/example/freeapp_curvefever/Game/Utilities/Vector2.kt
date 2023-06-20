@@ -1,7 +1,4 @@
-package com.example.freeapp_curvefever.Utilities
-import android.util.Log
-import java.util.Vector
-import kotlin.io.path.createTempDirectory
+package com.example.freeapp_curvefever.Game.Utilities
 import kotlin.math.*
 
 open class Vector2(var x: Double, var y: Double) {
@@ -50,12 +47,12 @@ open class Vector2(var x: Double, var y: Double) {
         return direction.magnitude()
     }
 
-    fun right() : Vector2{
+    fun right() : Vector2 {
         // Relative right to self
         return Vector2(-y, x)
     }
 
-    fun left() : Vector2{
+    fun left() : Vector2 {
         // Relative left to self
         return Vector2(y, -x)
     }
@@ -64,7 +61,7 @@ open class Vector2(var x: Double, var y: Double) {
         return Vector2(x / mag, y / mag)
     }
 
-    fun copy() : Vector2{
+    fun copy() : Vector2 {
         return Vector2(x, y)
     }
 
@@ -83,19 +80,19 @@ open class Vector2(var x: Double, var y: Double) {
     override fun toString(): String {
         return "($x, $y)"
     }
-    operator fun plus(other: Vector2) : Vector2{
+    operator fun plus(other: Vector2) : Vector2 {
         return Vector2(this.x + other.x, this.y+other.y)
     }
 
-    operator fun times(scalar : Float) : Vector2{
+    operator fun times(scalar : Float) : Vector2 {
         return Vector2(x * scalar, y * scalar)
     }
 
-    operator fun times(vector : Vector2) : Vector2{
+    operator fun times(vector : Vector2) : Vector2 {
         return Vector2(x * vector.x, y * vector.y)
     }
 
-    operator fun times(scalar : Int) : Vector2{
+    operator fun times(scalar : Int) : Vector2 {
         return Vector2(x * scalar, y * scalar)
     }
 

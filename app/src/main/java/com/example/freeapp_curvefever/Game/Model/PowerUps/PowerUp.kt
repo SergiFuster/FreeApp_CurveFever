@@ -1,9 +1,8 @@
-package com.example.freeapp_curvefever.Model.PowerUps
+package com.example.freeapp_curvefever.Game.Model.PowerUps
 
 import android.graphics.Bitmap
-import android.util.Log
-import com.example.freeapp_curvefever.Model.Player.Player
-import com.example.freeapp_curvefever.Utilities.Vector2
+import com.example.freeapp_curvefever.Game.Model.Player.Player
+import com.example.freeapp_curvefever.Game.Utilities.Vector2
 
 interface PowerUp {
     var timer : Double
@@ -21,15 +20,13 @@ interface PowerUp {
     fun catch(player : Player){
         player.activePowerUps.add(this)
         this.player = player
+        effect()
     }
 
     fun update(deltaTime : Float){
         timer += deltaTime
         if(timer >= duration){
             uneffect()
-        }
-        else{
-            effect()
         }
     }
     fun copy() : PowerUp

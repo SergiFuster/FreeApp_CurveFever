@@ -1,10 +1,8 @@
-package com.example.freeapp_curvefever
+package com.example.freeapp_curvefever.Game
 
 import android.graphics.Bitmap
-import com.example.freeapp_curvefever.Model.Game.Game
-import com.example.freeapp_curvefever.Model.Player.Player
-import com.example.freeapp_curvefever.Model.PowerUps.PowerUp
-import com.example.freeapp_curvefever.Utilities.Vector2
+import com.example.freeapp_curvefever.Game.Model.Player.Player
+import com.example.freeapp_curvefever.Game.Model.PowerUps.PowerUp
 
 interface IView {
     abstract val backGroundColor: Int
@@ -13,6 +11,8 @@ interface IView {
     abstract var powerUpStrings: List<String>
     abstract var lastFrameBuffer: Bitmap?
     abstract var debug: Boolean
+    abstract val playerShip: Int
+    abstract val roundNumber: Int
 
     fun drawTrails(players : List<Player>)
     fun drawHeads(players : List<Player>)
@@ -20,8 +20,8 @@ interface IView {
     fun normalizeX(x : Int) : Float
     fun normalizeY(y : Int) : Float
     fun saveFrameBuffer()
-    fun drawDeaths(deathCircles: MutableList<Game.Circle>)
     fun updateAnimations(deltaTime: Float)
-
-    val playerShip: Int
+    fun drawDeathOf(p: Player)
+    fun startNextRound()
+    fun restartApplication()
 }

@@ -1,11 +1,10 @@
-package com.example.freeapp_curvefever.Model.PowerUps
+package com.example.freeapp_curvefever.Game.Model.PowerUps
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.util.Log
-import com.example.freeapp_curvefever.Assets
-import com.example.freeapp_curvefever.Model.Player.Player
-import com.example.freeapp_curvefever.Utilities.Vector2
+import com.example.freeapp_curvefever.Game.Assets
+import com.example.freeapp_curvefever.Game.Model.Player.Player
+import com.example.freeapp_curvefever.Game.Utilities.Vector2
 
 class Jump(
     override var position: Vector2,
@@ -33,12 +32,4 @@ class Jump(
     override fun copy(): PowerUp {
         return Jump(position, radius, player, duration)
     }
-
-    /**
-     * This functions checks if this powerup collides
-     * with a player, if so, save the reference to
-     * it and return a boolean indicating if collided
-     * @param player The player which are checking for collisions
-     * @return The state of the collision
-     */
 }

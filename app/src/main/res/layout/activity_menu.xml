@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Menu.MenuActivity">
+
+    <ImageView
+        android:id="@+id/reverseImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#1E8728"
+        app:layout_constraintStart_toEndOf="@+id/jumpCheckBox"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:srcCompat="@drawable/powerup_thick_down" />
+
+    <CheckBox
+        android:id="@+id/sizeDownCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/reverseImageView"
+        app:layout_constraintStart_toEndOf="@+id/reverseImageView"
+        app:layout_constraintTop_toTopOf="@+id/reverseImageView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/speedUpImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#871E1E"
+        app:layout_constraintStart_toEndOf="@+id/thickUpCheckBox"
+        app:layout_constraintTop_toTopOf="@+id/thickUpImageView"
+        app:srcCompat="@drawable/powerup_speed_up" />
+
+    <CheckBox
+        android:id="@+id/speedUpCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/speedUpImageView"
+        app:layout_constraintStart_toEndOf="@+id/speedUpImageView"
+        app:layout_constraintTop_toTopOf="@+id/speedUpImageView"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <CheckBox
+        android:id="@+id/jumpCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:background="#1E5987"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nRoundsTextView"
+        app:srcCompat="@drawable/powerup_jump" />
+
+    <EditText
+        android:id="@+id/nRoundsEditText"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:ems="1"
+        android:hint="[1,6]"
+        android:inputType="number"
+        android:maxLength="1"
+        android:minEms="2"
+        app:layout_constraintBaseline_toBaselineOf="@+id/nRoundsTextView"
+        app:layout_constraintStart_toEndOf="@+id/nRoundsTextView" />
+
+    <TextView
+        android:id="@+id/nRoundsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="40dp"
+        android:text="Number of Rounds:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nPlayerTextView" />
+
+    <Button
+        android:id="@+id/playerColorPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="color picker"
+        app:layout_constraintBaseline_toBaselineOf="@+id/playerColorTextView"
+        app:layout_constraintStart_toEndOf="@+id/playerColorViewer" />
+
+    <View
+        android:id="@+id/playerColorViewer"
+        android:layout_width="20dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="64dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/playerColorTextView"
+        app:layout_constraintStart_toEndOf="@+id/playerColorTextView"
+        app:layout_constraintTop_toTopOf="@+id/playerColorTextView"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/playerColorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Player color:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/playerShipImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="120dp"
+        app:layout_constraintEnd_toEndOf="@+id/playerColorPicker"
+        app:layout_constraintTop_toBottomOf="@+id/playerColorPicker"
+        app:srcCompat="@drawable/ship_1_icon" />
+
+    <Button
+        android:id="@+id/plusPlayerShipButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="+"
+        app:layout_constraintEnd_toEndOf="@+id/playerShipImageView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/playerShipImageView"
+        app:layout_constraintTop_toBottomOf="@+id/playerShipImageView" />
+
+    <Button
+        android:id="@+id/minusPlayerShipButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="-"
+        app:layout_constraintBottom_toTopOf="@+id/playerShipImageView"
+        app:layout_constraintEnd_toEndOf="@+id/playerShipImageView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/playerShipImageView" />
+
+    <TextView
+        android:id="@+id/playerShipTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player Ship:"
+        app:layout_constraintBottom_toTopOf="@+id/minusPlayerShipButton"
+        app:layout_constraintEnd_toEndOf="@+id/playerShipImageView"
+        app:layout_constraintStart_toStartOf="@+id/playerShipImageView" />
+
+    <TextView
+        android:id="@+id/nPlayerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Number of Players:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerColorTextView" />
+
+    <EditText
+        android:id="@+id/nPlayersEditText"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        android:ems="1"
+        android:hint="[1,6]"
+        android:inputType="number"
+        android:maxLength="1"
+        android:minEms="2"
+        app:layout_constraintBaseline_toBaselineOf="@+id/nPlayerTextView"
+        app:layout_constraintStart_toEndOf="@+id/nPlayerTextView" />
+
+    <Button
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:enabled="false"
+        android:text="PLAY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speedUpImageView" />
+
+    <ImageView
+        android:id="@+id/thickUpImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:background="#7D1E87"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:srcCompat="@drawable/powerup_thick_up" />
+
+    <CheckBox
+        android:id="@+id/thickUpCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/thickUpImageView"
+        app:layout_constraintStart_toEndOf="@+id/thickUpImageView"
+        app:layout_constraintTop_toTopOf="@+id/thickUpImageView"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
