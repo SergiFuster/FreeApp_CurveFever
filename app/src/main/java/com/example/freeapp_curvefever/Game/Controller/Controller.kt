@@ -30,11 +30,17 @@ class Controller(private val view : IView, var model : Model?) : IGameController
                     if (model?.state == Model.State.FINISHED){
                         view.restartApplication()
                     }
+                    else if(model?.state == Model.State.WAITING){
+                        setInitialValues()
+                        view.startMusic()
+                        model?.startGame()
+                    }
                 }
                 TOUCH_DRAGGED -> gestureDetector.onDragged(model?.screenWidth!!, event.x, event.y)
             }
         }
 
+        if(model?.state == Model.State.WAITING) return
         updateState()
         if (model?.state == Model.State.RESULTS) return
         model?.rotations(deltaTime, gestureDetector.gesture)
@@ -43,7 +49,7 @@ class Controller(private val view : IView, var model : Model?) : IGameController
         model?.movement(deltaTime)
         model?.think(view.lastFrameBuffer, view.backGroundColor)
         if(view.lastFrameBuffer != null)
-            model?.collisions(view.lastFrameBuffer!!, view.backGroundColor)
+            model?.collisions(view.lastFrameBuffer!!, view.backGroundColor, view.soundEffects)
 
         view.updateAnimations(deltaTime)
     }
@@ -53,10 +59,11 @@ class Controller(private val view : IView, var model : Model?) : IGameController
             Model.State.STARTING -> if (timer >= timeToStart) {
                 view.startNextRound()
                 model?.state = Model.State.PLAYING
+                view.soundEffects?.Start()
             }
             Model.State.RESULTS -> if (timer-lastTimeInResultState >= timeInResults){
                 if (model?.game!!.rounds >= model?.game!!.maxRounds) {
-                    model?.finishGame()
+                    view.soundEffects?.Finish()
                 }
                 else {
                     setInitialValues()

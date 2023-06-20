@@ -8,7 +8,7 @@ import com.example.freeapp_curvefever.Game.Model.Player.NPC
 import com.example.freeapp_curvefever.Game.Model.Player.Player
 import com.example.freeapp_curvefever.Game.Model.PowerUps.*
 import com.example.freeapp_curvefever.Game.Utilities.Vector2
-import es.uji.vj1229.framework.AnimatedBitmap
+import com.example.sharkuji.GAME.Sound.SoundPlayer
 import kotlin.random.Random
 
 class Game private constructor(
@@ -25,13 +25,15 @@ class Game private constructor(
 ) {
     var onMapPowerUps : MutableList<PowerUp> = arrayListOf()
 
-    fun collisions(frameBuffer: Bitmap, backgroundColor: Int){
+    fun collisions(frameBuffer: Bitmap, backgroundColor: Int, soundEffects: SoundPlayer?){
         for (p in players) {
             if (!p.alive) {
                 continue
             }
-            collisionsWithPowerUps(p)
+            collisionsWithPowerUps(p, soundEffects)
+            if (p.immortal) continue
             if (collisionsWithLinesOrOutOfScreen(p, frameBuffer, backgroundColor)) {
+                soundEffects?.Collision()
                 addPlayerToRoundRanking(p)
                 addDeathCircleOfPlayer(p)
             }
@@ -84,11 +86,12 @@ class Game private constructor(
         return false
     }
 
-    private fun collisionsWithPowerUps(player: Player) {
+    private fun collisionsWithPowerUps(player: Player, soundEffects: SoundPlayer?) {
         val iterator = onMapPowerUps.iterator()
         while(iterator.hasNext()){
             val powerUp = iterator.next()
             if(player.collideWithPowerUp(powerUp)) {
+                soundEffects?.Powerup()
                 powerUp.catch(player)
                 iterator.remove()
             }
@@ -110,7 +113,7 @@ class Game private constructor(
             p.tryStopPainting(deltaTime)
             p.updatePowerUps(deltaTime)
         }
-        tryGeneratePowerUp(deltaTime, screenWidth, screeHeight)
+        if(availablePowerUps.isNotEmpty()) tryGeneratePowerUp(deltaTime, screenWidth, screeHeight)
     }
 
     private fun tryGeneratePowerUp(deltaTime: Float, screenWidth: Int, screeHeight: Int){
@@ -180,7 +183,7 @@ class Game private constructor(
             var id = 0
             val playerPosition : Vector2 = availablePositions.random()
             availablePositions.remove(playerPosition)
-            val playerAnimation : AnimatedBitmap = Assets.getShipAnimationByIndex(playerShip)
+            val playerIconAnimation : Assets.IconAndAnimation = Assets.getShipAnimationByIndex(playerShip)
             val mainPlayer : Player =
                 Player(
                     id++,
@@ -190,7 +193,8 @@ class Game private constructor(
                     playerColor,
                     playerPosition,
                     Vector2.right,
-                    playerAnimation
+                    playerIconAnimation.icon,
+                    playerIconAnimation.animation
                 )
 
             val availableColors : MutableList<Int> =
@@ -209,7 +213,7 @@ class Game private constructor(
             for(i in 1 until playersNumber) {
                 val npcPosition : Vector2 = availablePositions.random()
                 availablePositions.remove(npcPosition)
-                val npcAnimation : AnimatedBitmap = Assets.getRandomAnimation()
+                val npcIconAnimation : Assets.IconAndAnimation = Assets.getRandomAnimation()
                 val npcColor = availableColors.random()
                 availableColors.remove(npcColor)
                 npcPlayers.add(
@@ -221,7 +225,8 @@ class Game private constructor(
                         npcColor,
                         npcPosition,
                         Vector2.right,
-                        npcAnimation
+                        npcIconAnimation.icon,
+                        npcIconAnimation.animation
                     )
                 )
             }
@@ -243,29 +248,10 @@ class Game private constructor(
 
             return Game(allPlayers, mainPlayer, npcPlayers, powerUpSize, roundNumberBuilder, powerUps.toList())
         }
-
-        private fun pickAndRemoveRandomPosition(availablePositions: MutableList<Vector2>): Vector2 {
-            val randomIndex = Random.nextInt(availablePositions.size)
-            val chosenPosition = availablePositions[randomIndex]
-
-            availablePositions.removeAt(randomIndex)
-
-            return chosenPosition
-        }
-
-        private fun pickAvailableColorAndDeleteFromList(availableColors : MutableList<Int>): Int {
-
-            val randomIndex = Random.nextInt(availableColors.size)
-            val chosenColor = availableColors[randomIndex]
-
-            availableColors.removeAt(randomIndex)
-
-            return chosenColor
-        }
     }
 
     companion object{
         fun builder() : Builder = Builder()
-        const val POWER_UP_PROB = 0.05
+        const val POWER_UP_PROB = 0.075
     }
 }

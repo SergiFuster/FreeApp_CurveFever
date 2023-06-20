@@ -10,7 +10,7 @@ class Jump(
     override var position: Vector2,
     override var radius: Double,
     override var player: Player? = null,
-    override var duration: Float = 1.5f
+    override var duration: Float = 2f
 ) : PowerUp {
     override var timer: Double = 0.0
     override var bitmap: Bitmap = Assets.puJumpIcon

@@ -37,15 +37,22 @@ object Assets {
     lateinit var ship4Animation : AnimatedBitmap
     lateinit var ship5Animation : AnimatedBitmap
     lateinit var ship6Animation : AnimatedBitmap
-    // region POWER UPS
+
     lateinit var puJumpIcon : Bitmap
     lateinit var puSizeDownIcon : Bitmap
     lateinit var puSizeUpIcon : Bitmap
     lateinit var puSpeedIcon : Bitmap
-    // endregion
+
+    lateinit var ship1 : Bitmap
+    lateinit var ship2 : Bitmap
+    lateinit var ship3 : Bitmap
+    lateinit var ship4 : Bitmap
+    lateinit var ship5 : Bitmap
+    lateinit var ship6 : Bitmap
+
     lateinit var  crown : Bitmap
 
-    lateinit var animations : MutableList<AnimatedBitmap>
+    lateinit var iconsAndAnimations : MutableList<IconAndAnimation>
 
 
     fun createResizableAssets(context: Context, screenWidth : Int, powerUpRadius: Float, playerSize: Float){
@@ -53,6 +60,12 @@ object Assets {
 
         val puSize : Int = (powerUpRadius * 2).roundToInt()
         val crownSize : Int = (playerSize * 8).roundToInt()
+        val ship1Size = getRelativeShipSize(playerSize, SHIP1_SHEET_HEIGHT, SHIP1_SHEET_WIDTH)
+        val ship2Size = getRelativeShipSize(playerSize, SHIP2_SHEET_HEIGHT, SHIP2_SHEET_WIDTH)
+        val ship3Size = getRelativeShipSize(playerSize, SHIP3_SHEET_HEIGHT, SHIP3_SHEET_WIDTH)
+        val ship4Size = getRelativeShipSize(playerSize, SHIP4_SHEET_HEIGHT, SHIP4_SHEET_WIDTH)
+        val ship5Size = getRelativeShipSize(playerSize, SHIP5_SHEET_HEIGHT, SHIP5_SHEET_WIDTH)
+        val ship6Size = getRelativeShipSize(playerSize, SHIP6_SHEET_HEIGHT, SHIP6_SHEET_WIDTH)
         puJumpIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
             R.drawable.powerup_jump
         ), puSize, puSize, true)
@@ -68,6 +81,24 @@ object Assets {
         crown = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
             R.drawable.crown
         ), crownSize, crownSize, true)
+        ship1 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
+            R.drawable.ship_1_icon
+        ), (playerSize*4).toInt(), (playerSize*4).toInt(), true)
+        ship2 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
+            R.drawable.ship_2_icon
+        ), (playerSize*4).toInt(), (playerSize*4).toInt(), true)
+        ship3 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
+            R.drawable.ship_3_icon
+        ), (playerSize*4).toInt(), (playerSize*4).toInt(), true)
+        ship4 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
+            R.drawable.ship_4_icon
+        ), (playerSize*4).toInt(), (playerSize*4).toInt(), true)
+        ship5 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
+            R.drawable.ship_5_icon
+        ), (playerSize*4).toInt(), (playerSize*4).toInt(), true)
+        ship6 = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources,
+            R.drawable.ship_6_icon
+        ), ship6Size.width, ship6Size.height, true)
 
         ship1SpriteSheet = createSpriteSheet(resources, R.drawable.ship_1, SHIP1_SHEET_HEIGHT, SHIP1_SHEET_WIDTH)
         ship2SpriteSheet = createSpriteSheet(resources, R.drawable.ship_2, SHIP2_SHEET_HEIGHT, SHIP2_SHEET_WIDTH)
@@ -76,12 +107,7 @@ object Assets {
         ship5SpriteSheet = createSpriteSheet(resources, R.drawable.ship_5, SHIP5_SHEET_HEIGHT, SHIP5_SHEET_WIDTH)
         ship6SpriteSheet = createSpriteSheet(resources, R.drawable.ship_6, SHIP6_SHEET_HEIGHT, SHIP6_SHEET_WIDTH)
 
-        val ship1Size = getRelativeShipSize(playerSize, SHIP1_SHEET_HEIGHT, SHIP1_SHEET_WIDTH)
-        val ship2Size = getRelativeShipSize(playerSize, SHIP2_SHEET_HEIGHT, SHIP2_SHEET_WIDTH)
-        val ship3Size = getRelativeShipSize(playerSize, SHIP3_SHEET_HEIGHT, SHIP3_SHEET_WIDTH)
-        val ship4Size = getRelativeShipSize(playerSize, SHIP4_SHEET_HEIGHT, SHIP4_SHEET_WIDTH)
-        val ship5Size = getRelativeShipSize(playerSize, SHIP5_SHEET_HEIGHT, SHIP5_SHEET_WIDTH)
-        val ship6Size = getRelativeShipSize(playerSize, SHIP6_SHEET_HEIGHT, SHIP6_SHEET_WIDTH)
+
 
         val frames = ArrayList<Bitmap>()
         formatFrames(frames, ship1SpriteSheet, 0, 3, ship1Size)
@@ -97,7 +123,14 @@ object Assets {
         formatFrames(frames, ship6SpriteSheet, 0, 2, ship6Size)
         ship6Animation = AnimatedBitmap(0.2f, true, *frames.toTypedArray())
 
-        animations = arrayListOf(ship1Animation, ship2Animation, ship3Animation, ship4Animation, ship5Animation, ship6Animation)
+        iconsAndAnimations = arrayListOf(
+            IconAndAnimation(ship1, ship1Animation),
+            IconAndAnimation(ship2, ship2Animation),
+            IconAndAnimation(ship3, ship3Animation),
+            IconAndAnimation(ship4, ship4Animation),
+            IconAndAnimation(ship5, ship5Animation),
+            IconAndAnimation(ship6, ship6Animation)
+        )
     }
 
     private fun formatFrames(frames : ArrayList<Bitmap>, sSheet : SpriteSheet, rows : Int, columns : Int, size : Size){
@@ -124,15 +157,15 @@ object Assets {
         )
     }
 
-    fun getShipAnimationByIndex(index : Int) : AnimatedBitmap{
-        val anim = animations[index-1]
-        animations.remove(anim)
+    fun getShipAnimationByIndex(index : Int) : IconAndAnimation{
+        val anim = iconsAndAnimations[index-1]
+        iconsAndAnimations.remove(anim)
         return anim
     }
 
-    fun getRandomAnimation() : AnimatedBitmap{
-        val anim = animations.random()
-        animations.remove(anim)
+    fun getRandomAnimation() : IconAndAnimation{
+        val anim = iconsAndAnimations.random()
+        iconsAndAnimations.remove(anim)
         return anim
     }
 
@@ -149,5 +182,24 @@ object Assets {
             true
         )
     }
+
+    fun Bitmap.rotated(degrees: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.setRotate(degrees)
+        return Bitmap.createBitmap(
+            this,
+            0,
+            0,
+            this.width,
+            this.height,
+            matrix,
+            true
+        )
+    }
+
+    class IconAndAnimation constructor(
+        val icon : Bitmap,
+        val animation : AnimatedBitmap
+    )
 
 }

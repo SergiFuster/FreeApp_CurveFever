@@ -1,17 +1,11 @@
 package com.example.freeapp_curvefever.Menu
 
-import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import com.example.freeapp_curvefever.Game.MainActivity
-import com.flask.colorpicker.ColorPickerView
-import com.flask.colorpicker.builder.ColorPickerDialogBuilder
+import com.example.freeapp_curvefever.R
 
 class MenuModel {
 
-    var playerColor : Int = 0
+    var playerColor : Int = R.color.purple_200
     var playerShipIndex : Int = 1
     var nRounds : Int = 0
     var nPlayers : Int = 0
@@ -28,7 +22,13 @@ class MenuModel {
         playerColor = selectedColor
     }
 
-    fun createGameInfo(speedPowerUp: Boolean, sizeUpPowerUp: Boolean, sizeDownPowerUp: Boolean, jumpPowerUp: Boolean) {
+    fun createGameInfo(
+        speedPowerUp: Boolean,
+        sizeUpPowerUp: Boolean,
+        sizeDownPowerUp: Boolean,
+        jumpPowerUp: Boolean,
+        soundActive: Boolean
+    ) {
         val powerUpString : MutableList<String> = arrayListOf()
         if(jumpPowerUp) powerUpString.add("JUMP")
         if(speedPowerUp) {
@@ -38,7 +38,7 @@ class MenuModel {
         if(sizeDownPowerUp) powerUpString.add("SIZE_DOWN")
         if(sizeUpPowerUp) powerUpString.add("SIZE_UP")
 
-        gameInfo = GameInfo(playerColor, playerShipIndex, nPlayers, nRounds, powerUpString)
+        gameInfo = GameInfo(playerColor, playerShipIndex, nPlayers, nRounds, powerUpString, soundActive)
     }
 
     fun saveState(outState : Bundle) {

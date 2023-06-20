@@ -5,7 +5,11 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Paint
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.provider.MediaStore.Audio.Media
+import com.example.freeapp_curvefever.Game.Assets.rotated
 import com.example.freeapp_curvefever.Game.Assets.rotatedCurrentFrame
 import com.example.freeapp_curvefever.Game.Controller.Controller
 import com.example.freeapp_curvefever.Game.Model.Model
@@ -14,6 +18,8 @@ import com.example.freeapp_curvefever.Game.Model.PowerUps.PowerUp
 import com.example.freeapp_curvefever.Game.Utilities.Vector2
 import com.example.freeapp_curvefever.Menu.GameInfo
 import com.example.freeapp_curvefever.Menu.MenuActivity
+import com.example.freeapp_curvefever.R
+import com.example.sharkuji.GAME.Sound.SoundPlayer
 import es.uji.vj1229.framework.GameActivity
 import es.uji.vj1229.framework.Graphics
 import es.uji.vj1229.framework.IGameController
@@ -30,6 +36,7 @@ class MainActivity(
     override var powerUpStrings: List<String> = arrayListOf("JUMP")
     override val backGroundColor: Int = Color.parseColor("#001B3B")
     override var roundNumber: Int = 1
+    override var sound : Boolean = true
     // ---------------------------------------------------------------------------------------------
     override var lastFrameBuffer: Bitmap? = null
     var model : Model? = null
@@ -37,6 +44,8 @@ class MainActivity(
     private var screenHeight : Int = 0
     private var scaleX : Float = 0f
     private var scaleY : Float = 0f
+    private var mediaPlayer : MediaPlayer? = null
+    override var soundEffects : SoundPlayer? = null
 
     private lateinit var controller : Controller
     lateinit var graphics : Graphics
@@ -52,7 +61,20 @@ class MainActivity(
             playersNumber = gameInfo.nPlayers
             powerUpStrings = gameInfo.powerUps
             roundNumber = gameInfo.nRounds
+            sound = gameInfo.soundActive
         }
+
+        if(sound){
+            mediaPlayer = MediaPlayer.create(this, R.raw.soundtrack)
+            val attributes = AudioAttributes.Builder().run {
+                setUsage(AudioAttributes.USAGE_GAME)
+                setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                build()
+            }
+            mediaPlayer?.setAudioAttributes(attributes)
+            soundEffects = SoundPlayer(this)
+        }
+        controller.timer = 0f
     }
 
     override fun onBitmapMeasuresAvailable(width: Int, height: Int) {
@@ -100,6 +122,9 @@ class MainActivity(
         }
     }
 
+    override fun startMusic(){
+        mediaPlayer?.start()
+    }
     private fun drawLine(graphics: Graphics, src : Vector2, dst : Vector2, radius : Float, color : Int){
         graphics.drawLine(
             src.x.toFloat(),
@@ -121,8 +146,9 @@ class MainActivity(
 
     override fun drawHeads(players: List<Player>) {
         for(player in players) {
+            if(!player.alive) continue
             with(player) {
-                val rotatedBitmap = animation.rotatedCurrentFrame(com.example.freeapp_curvefever.Game.Utilities.Vector2.degreesBetween(direction).toFloat())
+                val rotatedBitmap = animation.rotatedCurrentFrame(Vector2.degreesBetween(direction).toFloat())
                 graphics.drawBitmap(
                     rotatedBitmap,
                     position.x.toFloat() - rotatedBitmap.width / 2,
@@ -158,7 +184,7 @@ class MainActivity(
                 Model.State.STARTING -> {
                     graphics.setTextSize(100)
                     graphics.drawText(screenWidth / 2f, screenHeight / 2f, (controller.timeToStart-controller.timer).toInt().toString())
-                    drawHeads(model!!.game.players)
+                    drawHeadsIconRotated(model!!.game.players)
                 }
                 Model.State.RESULTS -> {
                     drawResults()
@@ -174,9 +200,35 @@ class MainActivity(
                     drawPowerUps(model!!.game.onMapPowerUps)
                     drawRounds()
                 }
+                Model.State.WAITING -> {
+                    drawStartMessage()
+                    drawHeadsIconRotated(model!!.game.players)
+                }
             }
         }
         return graphics.frameBuffer
+    }
+
+    private fun drawHeadsIconRotated(players: List<Player>) {
+        for(player in players) {
+            if(!player.alive) continue
+            val rotatedBitmap = player.icon.rotated(Vector2.degreesBetween(player.direction).toFloat())
+            with(player) {
+                graphics.drawBitmap(
+                    rotatedBitmap,
+                    position.x.toFloat() - rotatedBitmap.width / 2,
+                    position.y.toFloat() - rotatedBitmap.height / 2
+                )
+            }
+        }
+    }
+
+    private fun drawStartMessage() {
+        graphics.setTextSize(50)
+        val text = "Touch the screen to start the game"
+        val xPos = screenWidth / 4f
+        val yPos = screenHeight - 10f
+        graphics.drawText(xPos, yPos, text)
     }
 
     private fun drawRounds() {
@@ -187,6 +239,7 @@ class MainActivity(
     }
 
     private fun drawFinishMessage() {
+        graphics.setTextSize(50)
         val text = "Touch the screen to restart the game"
         val xPos = screenWidth / 4f
         val yPos = (3f/4f) * screenHeight
@@ -198,7 +251,7 @@ class MainActivity(
         graphics.setTextSize(50)
         graphics.drawText(screenWidth/4f+ Assets.crown.width, screenHeight/4f + 50f, "WINNER")
         graphics.drawBitmap(
-            model!!.game.winner!!.animation.currentFrame,
+            model!!.game.winner!!.icon,
             screenWidth/2f,
             screenHeight/4f
         )
@@ -214,12 +267,12 @@ class MainActivity(
         for(i in 0 until model!!.game.players.size){
             yPos = (100 * (i+1)).toFloat() + 10
             graphics.drawBitmap(
-                model!!.game.players[i].animation.currentFrame,
+                model!!.game.players[i].icon,
                 xPos,
-                yPos - model!!.game.players[i].animation.currentFrame.height
+                yPos - model!!.game.players[i].icon.height
             )
             graphics.drawText(
-                xPos + model!!.game.players[i].animation.currentFrame.width,
+                xPos + model!!.game.players[i].icon.width,
                 yPos,
                 "Points: ${model!!.game.players[i].totalPoints}"
             )
@@ -263,14 +316,22 @@ class MainActivity(
     }
 
     override fun restartApplication() {
+        stopMusic()
         val intent = Intent(this, MenuActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         this.startActivity(intent)
         this.finish()
     }
 
+    private fun stopMusic() {
+        mediaPlayer?.reset()
+        mediaPlayer?.stop()
+    }
+
     override fun updateAnimations(deltaTime: Float) {
-        for (player in model!!.game.players)
+        for (player in model!!.game.players) {
+            if (!player.alive) continue
             player.animation.update(deltaTime)
+        }
     }
 }

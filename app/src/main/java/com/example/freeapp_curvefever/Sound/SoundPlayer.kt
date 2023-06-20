@@ -17,51 +17,44 @@ class SoundPlayer(val context : Context) {
         build()
     }
     private var volume : Float = 1f
-    private var shellCaughtId : Int = 0
-    private var preyCaughtId : Int = 0
-    private var explosionId : Int = 0
-    private var deathId : Int = 0
-    private var finId : Int = 0
+    private var roundStart : Int = 0
+    private var gameFinish : Int = 0
+    private var collision : Int = 0
+    private var powerup : Int = 0
 
     init {
         loadSounds()
     }
 
     private fun loadSounds(){
-        /*
-        shellCaughtId = pool.load(context, R.raw.picked_shell, 1)
-        preyCaughtId = pool.load(context, R.raw.prey_caught, 1)
-        explosionId = pool.load(context, R.raw.explosion, 1)
-        deathId = pool.load(context, R.raw.death, 1)
-        finId = pool.load(context, R.raw.fin, 1)
-        */
+        roundStart = pool.load(context, R.raw.start, 1)
+        gameFinish = pool.load(context, R.raw.finish, 1)
+        collision = pool.load(context, R.raw.collision, 1)
+        powerup = pool.load(context, R.raw.powerup, 1)
     }
 
     private fun playSound(id : Int){
         when(id) {
-            finId -> pool.play(id, 0.05f, 0.05f, 0, 0, .5f)
-            deathId -> pool.play(id, volume, volume, 0, 0, .5f)
-            else -> pool.play(id, volume, volume, 0, 0, 1f)
+            roundStart -> pool.play(id, volume, volume, 0, 0, .5f)
+            gameFinish -> pool.play(id, volume, volume, 0, 0, .5f)
+            collision -> pool.play(id, volume, volume, 0, 0, 0.5f)
+            powerup -> pool.play(id, volume, volume, 0, 0, 0.5f)
         }
     }
 
-    fun Shell(){
-        playSound(shellCaughtId)
+    fun Start(){
+        playSound(roundStart)
     }
 
-    fun Prey(){
-        playSound(preyCaughtId)
+    fun Finish(){
+        playSound(gameFinish)
     }
 
-    fun Explosion(){
-        playSound(explosionId)
+    fun Collision(){
+        playSound(collision)
     }
 
-    fun Death(){
-        playSound(deathId)
-    }
-
-    fun Fin(){
-        playSound(finId)
+    fun Powerup(){
+        playSound(powerup)
     }
 }

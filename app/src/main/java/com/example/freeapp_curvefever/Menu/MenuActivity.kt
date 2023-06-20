@@ -1,17 +1,14 @@
 package com.example.freeapp_curvefever.Menu
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
-import android.view.Menu
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -34,6 +31,7 @@ class MenuActivity : AppCompatActivity(), MenuView {
     lateinit var thickDownCheckBox : CheckBox
     lateinit var thickUpCheckBox : CheckBox
     lateinit var speedUpCheckBox : CheckBox
+    lateinit var soundSwitch : Switch
 
     val model : MenuModel = MenuModel()
     val presenter : MenuPresenter = MenuPresenter(this, model)
@@ -71,8 +69,10 @@ class MenuActivity : AppCompatActivity(), MenuView {
             speedUpCheckBox.isChecked,
             thickUpCheckBox.isChecked,
             thickDownCheckBox.isChecked,
-            jumpCheckBox.isChecked
+            jumpCheckBox.isChecked,
+            soundSwitch.isChecked
         ) }
+        soundSwitch = findViewById(R.id.soundSwitch)
         if(savedInstanceState != null){
             presenter.setState(savedInstanceState)
         }

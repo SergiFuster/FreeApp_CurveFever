@@ -1,5 +1,6 @@
 package com.example.freeapp_curvefever.Game.Model.Player
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import com.example.freeapp_curvefever.Game.Assets
 import com.example.freeapp_curvefever.Game.Model.PowerUps.PowerUp
@@ -14,6 +15,7 @@ open class Player constructor(
     val color : Int,
     var position : Vector2,
     var direction : Vector2,
+    val icon : Bitmap,
     val animation : AnimatedBitmap,
     var lastPosition : Vector2 = position.copy(),
     var painting : Boolean = true,
@@ -41,38 +43,6 @@ open class Player constructor(
         }
         immortal = false
         deathCircle = Circle(position, 0f)
-    }
-    class Builder{
-        private var speedBuilder : Float = 10f
-        private var rotationSpeedBuilder : Float = 10f
-        private var colorBuilder : Int = Color.WHITE
-        private lateinit var animationBuilder : AnimatedBitmap
-        private var positionBuilder : Vector2 = Vector2.zero
-        private var directionBuilder : Vector2 = Vector2.right
-        private var radiusBuilder : Float = 0f
-        private var idBuilder : Int = 0
-
-        fun setSpeed(value : Float) = apply { speedBuilder = value }
-        fun setRotationSpeed(value : Float) = apply { rotationSpeedBuilder = value }
-        fun setColor(value : Int) = apply { colorBuilder = value }
-        fun setShip(value : Int) = apply { animationBuilder = Assets.getShipAnimationByIndex(value) }
-        fun setRadius(value : Float) = apply {radiusBuilder = value }
-        fun setPosition(value : Vector2) = apply { positionBuilder = value }
-        fun setId(value : Int) = apply { idBuilder = value }
-        fun setDirection(value : Vector2) = apply { directionBuilder = value }
-
-        fun build() : Player {
-            return Player(
-                idBuilder,
-                speedBuilder,
-                rotationSpeedBuilder,
-                radiusBuilder,
-                colorBuilder,
-                positionBuilder,
-                directionBuilder,
-                animationBuilder
-            )
-        }
     }
 
     fun collisionPoints(): List<Vector2> {
@@ -118,7 +88,7 @@ open class Player constructor(
     }
 
     fun collideWithPowerUp(powerUp : PowerUp) : Boolean{
-        return position.distanceTo(powerUp.center()) <= powerUp.radius+radius
+        return position.distanceTo(powerUp.center()) <= powerUp.bitmap.width+radius
     }
 
     fun updatePowerUps(deltaTime: Float) {
@@ -141,7 +111,6 @@ open class Player constructor(
     class Circle constructor(val center : Vector2, val radius : Float)
 
     companion object{
-        fun builder() : Builder = Builder()
         const val HOLE_SIZE = 0.5f
         const val HOLE_PROB = 0.1f
         const val SAVE_POSITION_DELAY = 0.3f

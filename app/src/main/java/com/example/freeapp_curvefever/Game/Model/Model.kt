@@ -2,6 +2,7 @@ package com.example.freeapp_curvefever.Game.Model
 
 import android.graphics.Bitmap
 import com.example.freeapp_curvefever.Game.Model.Game.Game
+import com.example.sharkuji.GAME.Sound.SoundPlayer
 import com.jcamenatuji.sharkuji.controller.GestureDetector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,9 +12,10 @@ class Model private constructor(
     val game : Game,
     val screenWidth : Int,
     val screeHeight : Int,
-    var state : State = State.STARTING
+    var state : State = State.WAITING
 ){
     enum class State{
+        WAITING,
         STARTING,
         PLAYING,
         RESULTS,
@@ -94,8 +96,8 @@ class Model private constructor(
 
     }
 
-    fun collisions(frameBuffer : Bitmap, backgroundColor : Int){
-        game.collisions(frameBuffer, backgroundColor)
+    fun collisions(frameBuffer: Bitmap, backgroundColor: Int, soundEffects: SoundPlayer?){
+        game.collisions(frameBuffer, backgroundColor, soundEffects)
     }
 
     fun roundFinished(){
@@ -112,6 +114,10 @@ class Model private constructor(
                 npc.think(lastFrameBuffer, backgroundColor)
             }
         }
+    }
+
+    fun startGame() {
+        state = State.STARTING
     }
 
     companion object{

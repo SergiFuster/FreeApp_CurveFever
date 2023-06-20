@@ -14,7 +14,7 @@ class SizeUp(
 ) : PowerUp {
     override var timer: Double = 0.0
     override var bitmap: Bitmap = Assets.puSizeUpIcon
-    override val color: Int = Color.argb(200, 145, 80, 134)
+    override val color: Int = Color.argb(200, 0, 145, 0)
 
     override fun effect() {
         if(player != null)

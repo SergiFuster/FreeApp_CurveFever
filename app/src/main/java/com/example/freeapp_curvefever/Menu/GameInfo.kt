@@ -8,7 +8,8 @@ data class GameInfo (
     val shipIndex : Int,
     val nPlayers : Int,
     val nRounds : Int,
-    val powerUps : List<String>
+    val powerUps : List<String>,
+    val soundActive : Boolean
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -17,7 +18,8 @@ data class GameInfo (
         parcel.readInt(),
         mutableListOf<String>().apply {
             parcel.readStringList(this)
-        }
+        },
+        parcel.readBoolean()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -26,6 +28,7 @@ data class GameInfo (
         parcel.writeInt(nPlayers)
         parcel.writeInt(nRounds)
         parcel.writeStringList(powerUps)
+        parcel.writeBoolean(soundActive)
     }
 
     override fun describeContents(): Int {

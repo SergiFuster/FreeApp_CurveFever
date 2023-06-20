@@ -99,7 +99,7 @@
         android:layout_width="20dp"
         android:layout_height="0dp"
         android:layout_marginStart="64dp"
-        android:background="@color/black"
+        android:background="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="@+id/playerColorTextView"
         app:layout_constraintStart_toEndOf="@+id/playerColorTextView"
         app:layout_constraintTop_toTopOf="@+id/playerColorTextView"
@@ -129,7 +129,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="+"
+        android:text="-"
         app:layout_constraintEnd_toEndOf="@+id/playerShipImageView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/playerShipImageView"
@@ -139,7 +139,7 @@
         android:id="@+id/minusPlayerShipButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="-"
+        android:text="+"
         app:layout_constraintBottom_toTopOf="@+id/playerShipImageView"
         app:layout_constraintEnd_toEndOf="@+id/playerShipImageView"
         app:layout_constraintHorizontal_bias="0.0"
@@ -181,12 +181,12 @@
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:enabled="false"
         android:text="PLAY"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/speedUpImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/soundTextView" />
 
     <ImageView
         android:id="@+id/thickUpImageView"
@@ -206,5 +206,24 @@
         app:layout_constraintStart_toEndOf="@+id/thickUpImageView"
         app:layout_constraintTop_toTopOf="@+id/thickUpImageView"
         app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/soundTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Sound:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/thickUpImageView" />
+
+    <Switch
+        android:id="@+id/soundSwitch"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/soundTextView"
+        app:layout_constraintStart_toEndOf="@+id/soundTextView"
+        app:layout_constraintTop_toTopOf="@+id/soundTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

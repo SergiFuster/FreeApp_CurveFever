@@ -1,14 +1,6 @@
 package com.example.freeapp_curvefever.Menu
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
-import com.example.freeapp_curvefever.Game.MainActivity
-import com.flask.colorpicker.ColorPickerView
-import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 
 class MenuPresenter(val view : MenuView, val model : MenuModel) {
 
@@ -16,13 +8,15 @@ class MenuPresenter(val view : MenuView, val model : MenuModel) {
         speedPowerUp : Boolean,
         sizeUpPowerUp : Boolean,
         sizeDownPowerUp : Boolean,
-        jumpPowerUp : Boolean
+        jumpPowerUp : Boolean,
+        soundActive : Boolean
     ) {
         model.createGameInfo(
             speedPowerUp,
             sizeUpPowerUp,
             sizeDownPowerUp,
-            jumpPowerUp
+            jumpPowerUp,
+            soundActive
         )
         view.startGameActivity(model.gameInfo)
     }
