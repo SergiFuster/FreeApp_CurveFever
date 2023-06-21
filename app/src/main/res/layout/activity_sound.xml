@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#009688"
     tools:context=".Menu.SoundActivity">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="128dp"
         android:text="Sound"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,10 +32,58 @@
         android:id="@+id/menuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="128dp"
         android:text="MENU"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/soundSwitch" />
+
+    <ImageView
+        android:id="@+id/red_ship"
+        android:layout_width="83dp"
+        android:layout_height="69dp"
+        android:rotation="-90"
+        app:layout_constraintBottom_toBottomOf="@+id/green_line"
+        app:layout_constraintEnd_toStartOf="@+id/green_line"
+        app:layout_constraintTop_toTopOf="@+id/green_line"
+        app:layout_constraintVertical_bias="0.473"
+        app:srcCompat="@drawable/ship_1_icon" />
+
+    <ImageView
+        android:id="@+id/yellow_ship"
+        android:layout_width="75dp"
+        android:layout_height="82dp"
+        android:rotation="90"
+        app:layout_constraintBottom_toBottomOf="@+id/red_line"
+        app:layout_constraintStart_toEndOf="@+id/red_line"
+        app:layout_constraintTop_toTopOf="@+id/red_line"
+        app:srcCompat="@drawable/ship_2_icon" />
+
+    <View
+        android:id="@+id/red_line"
+        android:layout_width="319dp"
+        android:layout_height="31dp"
+        android:layout_marginEnd="300dp"
+        android:background="#F44336"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.551" />
+
+    <View
+        android:id="@+id/green_line"
+        android:layout_width="319dp"
+        android:layout_height="31dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="-100dp"
+        android:layout_marginBottom="71dp"
+        android:background="#00FF0A"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuButton"
+        app:layout_constraintVertical_bias="0.505" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

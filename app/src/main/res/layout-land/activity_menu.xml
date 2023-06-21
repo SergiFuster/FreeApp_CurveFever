@@ -56,7 +56,7 @@
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:background="#1E5987"
         app:layout_constraintStart_toStartOf="@+id/nRoundsTextView"
         app:layout_constraintTop_toBottomOf="@+id/nRoundsTextView"
@@ -79,7 +79,7 @@
         android:id="@+id/nRoundsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="32dp"
         android:text="Number of Rounds:"
         app:layout_constraintStart_toStartOf="@+id/nPlayerTextView"
         app:layout_constraintTop_toBottomOf="@+id/nPlayerTextView" />
@@ -88,7 +88,7 @@
         android:id="@+id/playerColorPicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="64dp"
         android:text="color picker"
         app:layout_constraintBaseline_toBaselineOf="@+id/playerColorTextView"
         app:layout_constraintStart_toEndOf="@+id/playerColorViewer" />
@@ -97,9 +97,9 @@
         android:id="@+id/playerColorViewer"
         android:layout_width="20dp"
         android:layout_height="0dp"
+        android:layout_marginStart="64dp"
         android:background="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="@+id/playerColorTextView"
-        app:layout_constraintEnd_toEndOf="@+id/nPlayersEditText"
         app:layout_constraintStart_toEndOf="@+id/playerColorTextView"
         app:layout_constraintTop_toTopOf="@+id/playerColorTextView"
         app:layout_constraintVertical_bias="1.0" />
@@ -108,8 +108,8 @@
         android:id="@+id/playerColorTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
         android:text="Player color:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -118,7 +118,7 @@
         android:id="@+id/playerShipImageView"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="120dp"
         app:layout_constraintEnd_toEndOf="@+id/playerColorPicker"
         app:layout_constraintStart_toStartOf="@+id/playerColorPicker"
@@ -159,7 +159,7 @@
         android:id="@+id/nPlayerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:text="Number of Players:"
         app:layout_constraintStart_toStartOf="@+id/playerColorTextView"
         app:layout_constraintTop_toBottomOf="@+id/playerColorTextView" />
@@ -181,11 +181,11 @@
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:enabled="false"
         android:text="PLAY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/speedUpCheckBox"
+        app:layout_constraintStart_toStartOf="@+id/thickUpImageView"
         app:layout_constraintTop_toBottomOf="@+id/thickUpImageView" />
 
     <ImageView
